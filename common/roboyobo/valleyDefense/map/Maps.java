@@ -1,5 +1,7 @@
 package roboyobo.valleyDefense.map;
 
+import java.util.ArrayList;
+
 import org.newdawn.slick.Image;
 
 import roboyobo.valleyDefense.loader.Textures;
@@ -8,6 +10,10 @@ import roboyobo.valleyDefense.util.Reference;
 
 public class Maps {
 	public static Tile[][] map1 = new Tile[Reference.mapWidth][Reference.mapHeight];
+	public static ArrayList unlockedMaps;
+	public static ArrayList completedMaps;
+	public static int numOfMaps = 3;
+	public static ArrayList levelNames;
 	
 	public static void initMaps() {		
 		for(int var1 = 0; var1 < Reference.mapWidth; var1++) {

@@ -9,12 +9,14 @@ import javax.swing.JFileChooser;
 import org.newdawn.slick.Image;
 
 import roboyobo.valleyDefense.gui.Button;
+import roboyobo.valleyDefense.gui.LevelBox;
 import roboyobo.valleyDefense.loader.Textures;
 import roboyobo.valleyDefense.tile.Tile;
 
 public class Reference {
 	public static int menuID = 0;
-	public static int mapEditorID = 1;
+	public static int gameSelectorID = 1;
+	public static int mapEditorID = 2;
 	public static String imageFolder = "/resources/images/valleyDefense/";
 	public static int mapWidth = 25;
 	public static int mapHeight = 16;
@@ -32,5 +34,6 @@ public class Reference {
 	public static int screenWidth = 1400;
 	public static int screenHeight = 800;
 	public static ArrayList<Button> buttons;
+	public static ArrayList<LevelBox> levels;
 	
 }

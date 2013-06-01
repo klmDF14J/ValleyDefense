@@ -11,6 +11,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 import roboyobo.valleyDefense.loader.Textures;
+import roboyobo.valleyDefense.state.GameLevelSelectorState;
 import roboyobo.valleyDefense.state.MapEditorState;
 import roboyobo.valleyDefense.state.MenuState;
 import roboyobo.valleyDefense.tile.Tile;
@@ -32,6 +33,7 @@ public class ValleyDefense extends StateBasedGame {
 		MapEditorState.setupXValues();
 		MapEditorState.setupYValues();
 		addState(new MenuState(Reference.menuID));
+		addState(new GameLevelSelectorState(Reference.gameSelectorID));
 		addState(new MapEditorState(Reference.mapEditorID));
 		enterState(Reference.menuID);
 	}

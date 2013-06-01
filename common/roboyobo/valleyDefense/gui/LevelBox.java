@@ -9,29 +9,34 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 
 import roboyobo.valleyDefense.util.Reference;
 
-public class Button {
+public class LevelBox {
 	
 	private int startX, startY, length, height;
-	private boolean isLocked;
+	private boolean isUnlocked, isDone;
 	private int stateID;
+	private String levelName;
 	
 	/**
 	 * 
 	 * @param par1 The Starting X Coordinate
 	 * @param par2 The Starting Y Coordinate
-	 * @param par3 The Length Of The Button
-	 * @param par4 The Height Of The Button
-	 * @param par5 Is The Button Locked Or Not. i.e. Is It Clickable Or Not
-	 * @param par6 The ID Of The State Which Will Be Entered When This Is Clicked (isLocked Dependant)
+	 * @param par3 The Length Of The LevelBox
+	 * @param par4 The Height Of The LevelBox
+	 * @param par5 Is The Map Unlocked Or Not
+	 * @param par6 The Map Which Will Be Loaded When This Is Clicked
 	 * @param par7 The String To Be Displayed On The Button (If Any)
+	 * @param par8 Has The Level Been Completed
 	 */
-	public Button(int par1, int par2, int par3, int par4, boolean par5, int par6, String par7) {
+	public LevelBox(int par1, int par2, int par3, int par4, boolean par5, int par6, String par7, boolean par8) {
 		startX = par1;
 		startY = par2;
 		length = par3;
 		height = par4;
-		isLocked = par5;
+		isUnlocked = par5;
 		stateID = par6;
+		levelName = par7;
+		isDone = par8;
+		System.out.println("This Level Box: " + startY + ", isUnlocked: " + isUnlocked + ", isDone: " + isDone);
 	}
 	
 
@@ -52,29 +57,45 @@ public class Button {
 	}
 	
 	public void setLocked(boolean par1) {
-		isLocked = par1;
+		isUnlocked = par1;
 	}
 	
 	public boolean getLocked() {
-		return isLocked;
+		return isUnlocked;
 	}
-
 	
-	public void renderButton(int par1, int par2, int par3, int par4, Graphics g) {
-		if(isLocked) {
+	
+	public void isLevelDone(boolean par1) {
+		isDone = par1;
+	}
+	
+	public void renderLevelBox(int par1, int par2, int par3, int par4, Graphics g) {
+		
+		if(isUnlocked && isDone) {
 			int border = par3 / 20;
 			g.setColor(Color.black);
 			g.fill(new Rectangle(par1, par2, par3, par4));
-			g.setColor(Color.red);
-			g.fill(new Rectangle(par1 + border, par2 + border, par3 - (border * 2), par4 - (border * 2)));
+			g.setColor(Color.green);
+			g.drawString("Unlocked", par1 + 220, par2 + 75);
+			g.drawString("Done", par1 + 255, par2 + 10);
+		}
+		else if(isUnlocked) {
+			int border = par3 / 20;
+			g.setColor(Color.black);
+			g.fill(new Rectangle(par1, par2, par3, par4));
+			g.setColor(Color.orange);
+			g.drawString("Unlocked", par1 + 220, par2 + 75);
 		}
 		else {
 			int border = par3 / 20;
 			g.setColor(Color.black);
 			g.fill(new Rectangle(par1, par2, par3, par4));
-			g.setColor(Color.gray);
-			g.fill(new Rectangle(par1 + border, par2 + border, par3 - (border * 2), par4 - (border * 2)));
+			g.setColor(Color.red);
+			g.drawString("Locked", par1 + 240, par2 + 75);
 		}
+		g.setColor(Color.blue);
+		g.drawString(levelName, par1 + 10, par2 + 10);
+		
 	}
 
 

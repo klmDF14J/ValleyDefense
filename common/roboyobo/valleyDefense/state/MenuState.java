@@ -33,7 +33,7 @@ public class MenuState extends BasicGameState {
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
 		Reference.buttons = new ArrayList<Button>();
-		Reference.buttons.add(new Button(Reference.screenWidth / 2 - (400 / 2), Reference.screenHeight / 2 - 200, 400, 100, true, Reference.menuID, "Play"));
+		Reference.buttons.add(new Button(Reference.screenWidth / 2 - (400 / 2), Reference.screenHeight / 2 - 200, 400, 100, false, Reference.gameSelectorID, "Play"));
 		Reference.buttons.add(new Button(Reference.screenWidth / 2 - (400 / 2), Reference.screenHeight / 2 - 50, 400, 100, false, Reference.mapEditorID, "Level Editor"));
 		Reference.buttons.add(new Button(Reference.screenWidth / 2 - (400 / 2), Reference.screenHeight / 2 + 100, 400, 100, true, Reference.menuID, "Options"));
 		for(int var1 = 0; var1 < (Reference.screenWidth / (20 * 2F)); var1++) {
@@ -63,7 +63,7 @@ public class MenuState extends BasicGameState {
 			Button b = Reference.buttons.get(var1);
 			if(bounds.intersects(new Rectangle(b.getStartX(), b.getStartY(), b.getLength(), b.getHeight()))) {
 				if(!b.getLocked()) {
-					b.enterState(sbg);
+					b.enterState(sbg, true);
 				}
 			}
 		}
