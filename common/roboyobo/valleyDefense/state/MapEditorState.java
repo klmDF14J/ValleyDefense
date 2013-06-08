@@ -1,6 +1,5 @@
 package roboyobo.valleyDefense.state;
 
-import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -14,6 +13,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -22,46 +22,34 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
-import roboyobo.valleyDefense.loader.Textures;
-import roboyobo.valleyDefense.map.Maps;
+import roboyobo.valleyDefense.level.Level;
+import roboyobo.valleyDefense.level.LevelTools;
 import roboyobo.valleyDefense.tile.Tile;
 import roboyobo.valleyDefense.util.Reference;
-import roboyobo.valleyDefense.util.Texture;
 
 public class MapEditorState extends BasicGameState {
 	
 	public int stateID;
 	public Iterator i;
 
-	private int iteratorPos = 0;
-	private boolean done = false;
-	
-	
 	public MapEditorState(int StateID) {
 		stateID = StateID;
 	}
 	
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
-		Maps.initMaps();
-		setMap(Maps.map1);
 		addImagesToAndSetupArray();
+		LevelTools.setLevelBackground(Reference.map, new Color(255, 0, 0));
+		LevelTools.setMapToAir(Reference.map);
 	}
 	
 	private void addImagesToAndSetupArray() {
-		Reference.tileImages = new ArrayList<Image>();
-		Reference.tileImagesIterator = Reference.tileImages.iterator();
-		Reference.tileImages.add(Textures.grass);
-		Reference.tileImages.add(Textures.dirt);
-		Reference.tileImages.add(Textures.greyBrick);
-		Reference.tileImages.add(Textures.brownBrick);
-		
 		Reference.extraDataTiles = new ArrayList();
-		Reference.extraDataTiles.add(1);
 	}
 
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
+		LevelTools.renderExtraLevelGui(Reference.map, g);
 		renderMap();
 		renderCurrentTile();
 	}
@@ -71,22 +59,30 @@ public class MapEditorState extends BasicGameState {
 		
 	}
 	
-	private static void saveMap() throws FileNotFoundException, IOException {
+	private static void saveMap() {
 		String extension = ".VDMap";
 		if(Reference.fileChooser.getSelectedFile().getAbsolutePath().endsWith(extension)) {
 			extension = "";
 		}
 			
-		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(Reference.fileToWriteTo + extension));
-		oos.writeObject(Reference.map);
-		oos.close();
+		ObjectOutputStream oos;
+		try {
+			oos = new ObjectOutputStream(new FileOutputStream(Reference.fileToWriteTo + extension));
+			oos.writeObject(Reference.map);
+			oos.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	private static void loadMap() {
 		ObjectInputStream ois;
 		try {
 			ois = new ObjectInputStream(new FileInputStream(Reference.fileToOpen));
-			Reference.map = (Tile[][]) ois.readObject();
+			Reference.map = (Level) ois.readObject();
+			System.out.println(Reference.fileToOpen.getName());
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -99,10 +95,6 @@ public class MapEditorState extends BasicGameState {
 			e.printStackTrace();
 		}
 	}
-	
-	private void setMap(Tile[][] map) {
-		Reference.map = map;
-	}
 
 	@Override
 	public int getID() {
@@ -110,7 +102,7 @@ public class MapEditorState extends BasicGameState {
 	}
 	
 	private void renderCurrentTile() {
-		Image currentTile = Reference.tileImages.get(Reference.currentTile);
+		Image currentTile = Reference.tiles.get(Reference.currentTile);
 		currentTile.draw(1200, 40, 8F);
 	}
 	
@@ -133,7 +125,7 @@ public class MapEditorState extends BasicGameState {
 	public static void fillMap(int id) {
 		for(int var1 = 0; var1 < Reference.mapWidth; var1++) {
 			for(int var2 = 0; var2 < Reference.mapHeight; var2++) {
-					Reference.map[var1][var2] = new Tile(Reference.xPositions[var1], Reference.yPositions[var2], id, false);
+					Reference.map.setTileAt(var1, var2, new Tile(Reference.xPositions[var1], Reference.yPositions[var2], id, false));
 			}
 		}
 	}
@@ -141,20 +133,18 @@ public class MapEditorState extends BasicGameState {
 	private void renderMap() {
 		for(int var1 = 0; var1 < Reference.mapWidth; var1++) {
 			for(int var2 = 0; var2 < Reference.mapHeight; var2++) {
-				if(Reference.map[var1][var2] != null) {
-					Tile tile = Reference.map[var1][var2];
-					tile.renderTile(Reference.tileImages.get(tile.getTileID()), tile.getX(), tile.getY(), Reference.tileScale);
+				if(Reference.map.getTileAt(var1, var2) != null) {
+					Tile tile = Reference.map.getTileAt(var1, var2);
+					if(!tile.isAir()) {
+						tile.renderTile(Reference.tiles.get(tile.getTileID()), tile.getX(), tile.getY(), Reference.tileScaleSize);
+					}
 				}
 			}
 		}
 	}
 
 	public static void handleMapSaving() throws FileNotFoundException, IOException {
-		int returnVal = Reference.fileChooser.showSaveDialog(new JFrame());
-		if (returnVal == Reference.fileChooser.APPROVE_OPTION) {
-            Reference.fileToWriteTo = Reference.fileChooser.getSelectedFile();
-            saveMap();
-        }
+		
 	}
 
 	public static void handleMapLoading() {
@@ -184,11 +174,20 @@ public class MapEditorState extends BasicGameState {
 			}
 		}
 		if(mouseXScaled < Reference.mapWidth && mouseYScaled < Reference.mapHeight) {
-			Reference.map[mouseXScaled][mouseYScaled] = new Tile(Reference.xPositions[mouseXScaled], Reference.yPositions[mouseYScaled], id, hasExtraData);
+			boolean isAir = false;
+			if(id == 0) {
+				isAir = true;
+			}
+			
+			Tile tile = new Tile(Reference.xPositions[mouseXScaled], Reference.yPositions[mouseYScaled], id, hasExtraData);
+			tile.setAir(isAir);
+			Reference.map.setTileAt(mouseXScaled, mouseYScaled, tile);
+			
 		}
 	}
 
 	public static void handleKeyPress(int key, char c) {
+
 		if(key == Input.KEY_1) {
 			if(Reference.currentTile >= 1) {
 				Reference.currentTile--;
@@ -196,19 +195,19 @@ public class MapEditorState extends BasicGameState {
 		}
 		
 		if(key == Input.KEY_2) {
-			if(Reference.tileImages.size() - 1 > Reference.currentTile) {
+			if(Reference.tiles.size() - 1 > Reference.currentTile) {
 				Reference.currentTile++;
 			}
 		}
 		
 		if(key == Input.KEY_S) {
-			try {
-				MapEditorState.handleMapSaving();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			int returnVal = Reference.fileChooser.showSaveDialog(new JFrame());
+			if (returnVal == Reference.fileChooser.APPROVE_OPTION) {
+	            Reference.fileToWriteTo = Reference.fileChooser.getSelectedFile();
+	            saveMap();
+	        }
 			
+		
 		}
 		if(key == Input.KEY_O) {
 			MapEditorState.handleMapLoading();

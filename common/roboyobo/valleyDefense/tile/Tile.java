@@ -7,10 +7,15 @@ import roboyobo.valleyDefense.util.Texture;
 
 
 public class Tile implements java.io.Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int posX, posY;
 	private int tileID;
 	private boolean hasExtraData;
-	private boolean entryPoint = false;
+	private boolean isAir = false;
+	private boolean isExit = false;
 	private String entryDirection = "";
 	
 	public Tile(int par1, int par2, int par3, boolean par4) {
@@ -35,10 +40,28 @@ public class Tile implements java.io.Serializable {
 		return posY;
 	}
 	
-	public void setAsEntryPoint(String direction) {
-		if(hasExtraData) {
-			entryPoint = true;
-			entryDirection = direction;
-		}
+	public void setAir(boolean par1) {
+		isAir = par1;
 	}
+	
+	public boolean isAir() {
+		return isAir;
+	}
+	
+	public boolean hasExtraData() {
+		return hasExtraData;
+	}
+	
+	public void setHasExtraData(boolean par1) {
+		hasExtraData = par1;
+	}
+	
+	public boolean isExit() {
+		return isExit;
+	}
+	
+	public void setExit(boolean par1) {
+		isExit = par1;
+	}
+	
 }
