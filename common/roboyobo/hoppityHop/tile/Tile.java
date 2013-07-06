@@ -2,8 +2,6 @@ package roboyobo.hoppityHop.tile;
 
 import org.newdawn.slick.Image;
 
-import roboyobo.hoppityHop.util.Texture;
-
 
 
 public class Tile implements java.io.Serializable {

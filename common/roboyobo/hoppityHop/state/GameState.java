@@ -14,11 +14,12 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
-import roboyobo.hoppityHop.game.Building;
 import roboyobo.hoppityHop.game.MoneyHandler;
 import roboyobo.hoppityHop.gui.Button;
 import roboyobo.hoppityHop.loader.Textures;
+import roboyobo.hoppityHop.player.Player;
 import roboyobo.hoppityHop.tile.Tile;
+import roboyobo.hoppityHop.util.Chat;
 import roboyobo.hoppityHop.util.Reference;
 
 public class GameState extends BasicGameState {
@@ -32,9 +33,20 @@ public class GameState extends BasicGameState {
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
 		Reference.pickupableBuildings = new ArrayList<Integer>();
+		Reference.placeableBlocks = new ArrayList<Integer>();
 		
-		Reference.pickupableBuildings.add(1);
-		Reference.pickupableBuildings.add(2);
+		Reference.pickupableBuildings.add(20);
+		
+		for(int var1 = 0; var1 < 7; var1++) {
+			Reference.placeableBlocks.add(20 + var1);
+		}
+		
+		//Reference.map.setup();
+		
+		Reference.players[0] = new Player(Reference.username, 0, 10, 10, Color.red, "Test Player");
+		Reference.players[1] = new Player("Awesome Man", 1, 0, 5, Color.blue);
+		Reference.players[2] = new Player("Cool Dude", 2, 3, 7, Color.yellow);
+		Reference.players[3] = new Player("Great Guy", 3, 9, 2, Color.green);
 	}
 	
 	@Override
@@ -43,11 +55,6 @@ public class GameState extends BasicGameState {
 		Reference.buttons = new ArrayList<Button>();
 		Reference.buttons.add(new Button(1200, Reference.screenHeight / 2 + 300, 200, 50, false, Reference.menuID, "Back To Menu", Reference.fonts.get(4)));
 		Reference.buttons.add(new Button(1200, Reference.screenHeight / 2 + 350, 200, 50, false, Reference.gameSelectorID, "Choose A Different Map", Reference.fonts.get(4)));
-		for(int var1 = 0; var1 < (Reference.screenWidth / (Reference.tileSize * Reference.tileScaleSize)); var1++) {
-			for(int var2 = 0; var2 < (Reference.screenHeight / (Reference.tileSize * Reference.tileScaleSize)); var2++) {
-				Reference.tiles.get(1).draw((Reference.tileSize * Reference.tileScaleSize) * var1, (Reference.tileSize * Reference.tileScaleSize) * var2, Reference.tileScaleSize);
-			}
-		}
 		
 		renderMap();
 		for(int var3 = 0; var3 < Reference.buttons.size(); var3++) {
@@ -62,44 +69,62 @@ public class GameState extends BasicGameState {
 		Reference.items.get(1).draw(1100, 60, Reference.iconScaleSize);
 		Reference.fonts.get(0).drawString(1175, 60, "X" + MoneyHandler.getMoney(), new Color(0, 0, 0));
 		
+		renderAllPlayers(g);
+		
+		int[] blocks = Reference.levels.get(Reference.currentLevel).getBlocks();
+		
 		for(int var3 = 0; var3 < 7; var3++) {
 			int[] x = {100, 180, 260, 340, 420, 500, 580};
 			Textures.box.draw(x[var3] - 100, 720, 2F);
 			if(var3 == Reference.currentBuilding - 1) {
 				Textures.boxH.draw(x[var3] - 100, 720, 2F);
 			}
-			Reference.buildingImages.get(var3 + 1).draw(x[var3] - 80, 740, 2F);
+			Reference.tiles.get(var3 + 20).draw(x[var3] - 80, 740, 2F);
+			if(var3 == 0) {
+				Reference.fonts.get(4).drawString(x[0] - 45, 780, "" + blocks[var3]);
+			}
+			else if(var3 == 6 && blocks[6] != 0) {
+				Reference.fonts.get(4).drawString(x[6] - 35, 780, "" + blocks[var3]);
+			}
+			else if(var3 == 6 && blocks[6] == 0) {
+				Reference.fonts.get(4).drawString(x[6] - 39, 780, "" + blocks[var3]);
+			}
+			else {
+				Reference.fonts.get(4).drawString(x[var3] - 40, 780, "" + blocks[var3]);
+			}
 		}
 	}
 
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
+		Reference.updateTime++;
+		if(Reference.updateTime >= Reference.tickTime) {
+			Reference.updateTime = 0;
+			for(int var1 = 0; var1 < Reference.players.length; var1++) {
+				if(Reference.players[var1] != null) {
+					if(!Reference.players[var1].isOnSolidBlock()) {
+						Reference.players[var1].moveDown();
+					}
+				}
+			}
+		}
+		
+		Reference.lastJumpTime++;
+		
+		if(Reference.players[Reference.currentPlayer].isOnSolidBlock()) {
+			Reference.lastJumpTime += Reference.minJumpTime;
+		}
 		
 	}
+	
+	
 
 	@Override
 	public int getID() {
 		return stateID;
 	}
 	
-	private void renderMap() {
-		for(int var1 = 0; var1 < Reference.mapWidth; var1++) {
-			for(int var2 = 0; var2 < Reference.mapHeight; var2++) {
-				if(Reference.map.getTileAt(var1, var2) != null) {
-					Tile tile = Reference.map.getTileAt(var1, var2);
-					tile.renderTile(Reference.tiles.get(tile.getTileID()), tile.getX(), tile.getY(), Reference.tileScaleSize);
-				}
-			}
-		}
-		for(int var1 = 0; var1 < Reference.mapWidth; var1++) {
-			for(int var2 = 0; var2 < Reference.mapHeight; var2++) {
-				if(Reference.map.getBuildingAt(var1, var2) != null) {
-					Building building = Reference.map.getBuildingAt(var1, var2);
-					building.renderTile(Reference.buildingImages.get(building.getTileID()), building.getX(), building.getY(), Reference.tileScaleSize);
-				}
-			}
-		}
-	}
+	
 
 	public static void handleMouseClick(int button, int x, int y, StateBasedGame sbg) {
 		Rectangle bounds = new Rectangle(x, y, 10, 10);
@@ -108,13 +133,41 @@ public class GameState extends BasicGameState {
 			if(bounds.intersects(new Rectangle(b.getStartX(), b.getStartY(), b.getLength(), b.getHeight()))) {
 				if(!b.getLocked()) {
 					b.enterState(sbg, true);
+					if(b.getStateID() == 0 || b.getStateID() == 1) {
+						resetLevel();
+					}
 				}
 			}
 		}
 		placeBuilding(button, x, y);
 	}
 	
+	private void renderMap() {
+		for(int var1 = 0; var1 < Reference.mapWidth; var1++) {
+			for(int var2 = 0; var2 < Reference.mapHeight; var2++) {
+				Tile tile = Reference.map.getTileAt(var1, var2);
+				if(tile != null) {
+					tile.renderTile(Reference.tiles.get(tile.getTileID()), tile.getX(), tile.getY(), Reference.tileScaleSize);
+				}
+			}
+		}
+	}
+	
+	private void renderAllPlayers(Graphics g) {
+		for(int var1 = 0; var1 < Reference.players.length; var1++) {
+			if(Reference.players[var1] != null) {
+				Reference.players[var1].renderPlayer();
+				if(Reference.players[var1].getID() == Reference.currentPlayer) {
+					Player player = Reference.players[var1];
+					g.setColor(player.getColour());
+					g.drawRect(Reference.xPositions[player.getX()], Reference.yPositions[player.getY()], player.getImage().getWidth() * Reference.tileScaleSize, player.getImage().getHeight() * Reference.tileScaleSize);
+				}
+			}
+		}
+	}
+	
 	private static void placeBuilding(int button, int x, int y) {
+		int[] blocks = Reference.levels.get(Reference.currentLevel).getBlocks();
 		int mouse_x = x;
 		int mouse_y = y;
 		int mouseXScaled;
@@ -122,6 +175,7 @@ public class GameState extends BasicGameState {
 		boolean hasExtraData = false;
 		boolean isPickupable = false;
 		int id = Reference.currentBuilding;
+		int texture = id + 19;
 		mouse_x -= 40;
 		mouse_y -= 40;
 		mouseXScaled = mouse_x / 40;
@@ -135,33 +189,31 @@ public class GameState extends BasicGameState {
 				}
 			}
 			
+			
+			
 			if(button == 0) { 
-				Building building = new Building(Reference.xPositions[mouseXScaled], Reference.yPositions[mouseYScaled], id , hasExtraData, isPickupable);
-				Building b = Reference.map.getBuildingAt(mouseXScaled, mouseYScaled);
-				if(b == null) {
-					if(Reference.blocks[id - 1] > 0 && Reference.currentBuilding <= 7) {
-						Reference.map.setBuildingAt(mouseXScaled, mouseYScaled, building);
-						Reference.blocks[id - 1]--;
-						System.out.println("B is null");
+				Tile tile = Reference.map.getTileAt(mouseXScaled, mouseYScaled);
+				if(tile == null) {
+					if(blocks[id - 1] > 0 && Reference.currentBuilding <= 7) {
+						Reference.map.setTileAt(mouseXScaled, mouseYScaled, new Tile(Reference.xPositions[mouseXScaled], Reference.yPositions[mouseYScaled], texture, hasExtraData));
+						blocks[id - 1]--;
 					}
 				}
-				else if(b.getTileID() == 0) {
-					if(Reference.blocks[id - 1] > 0 && Reference.currentBuilding <= 7) {
-						Reference.map.setBuildingAt(mouseXScaled, mouseYScaled, building);
-						Reference.blocks[id - 1]--;
-						System.out.println("B.getTileID() == 0");
+				else if(tile.getTileID() == 0) {
+					if(blocks[id - 1] > 0 && Reference.currentBuilding <= 7) {
+						Reference.map.setTileAt(mouseXScaled, mouseYScaled, new Tile(Reference.xPositions[mouseXScaled], Reference.yPositions[mouseYScaled], texture, hasExtraData));
+						blocks[id - 1]--;
 					}
 				}
 			}
 			else if(button == 1) {
-				Building building = new Building(Reference.xPositions[mouseXScaled], Reference.yPositions[mouseYScaled], id, hasExtraData, isPickupable);
-				building.setTileID(0);
-				Building b1 = Reference.map.getBuildingAt(mouseXScaled, mouseYScaled);
-					if(b1 != null) {
+				Tile tile = Reference.map.getTileAt(mouseXScaled, mouseYScaled);
+					if(tile != null ) {
 						for(int var2 = 0; var2 < Reference.pickupableBuildings.size(); var2++) {
-							if(b1.getTileID() == Reference.pickupableBuildings.get(var2)) {
-								Reference.map.setBuildingAt(mouseXScaled, mouseYScaled, building);
-								Reference.blocks[b1.getTileID() - 1]++;
+							if(tile.getTileID() == Reference.pickupableBuildings.get(var2)) {
+								Reference.map.setTileAt(mouseXScaled, mouseYScaled, new Tile(Reference.xPositions[mouseXScaled], Reference.yPositions[mouseYScaled], 0, hasExtraData));
+								blocks[tile.getTileID() - 20]++;
+							
 							}
 						}
 					}
@@ -174,42 +226,47 @@ public class GameState extends BasicGameState {
 	
 	public static void handleKeyPress(int key, char c) {
 		if(key == Input.KEY_R) {
-			Reference.blocks = Reference.blockDefaults;
-			Reference.map = Reference.levels.get(Reference.currentLevel);
-			Reference.map.clear();
+			resetLevel();
 		}
-		if(key == Input.KEY_K) {
-			if(Reference.currentLevel + 1 <= Reference.levels.size()) {
-				Reference.currentLevel++;
-				Reference.map = Reference.levels.get(Reference.currentLevel);
+		
+		int[] keys = {Input.KEY_1, Input.KEY_2, Input.KEY_3, Input.KEY_4, Input.KEY_5, Input.KEY_6, Input.KEY_7};
+		for(int var1 = 0; var1 < keys.length; var1++) {
+			if(key == keys[var1]) {
+				Reference.currentBuilding = var1 + 1;
 			}
 		}
-		if(key == Input.KEY_L) {
-			if(Reference.currentLevel - 1 >= 0) {
-				Reference.currentLevel--;
-				Reference.map = Reference.levels.get(Reference.currentLevel);
+		
+		if(key == Input.KEY_C) {
+			if(Reference.currentPlayer == 3) {
+				Reference.currentPlayer = 0;
+			}
+			else {
+				Reference.currentPlayer++;
 			}
 		}
-		if(key == Input.KEY_1) {
-			Reference.currentBuilding = 1;
+		if(Reference.players[Reference.currentPlayer] != null) {
+			handlePlayerMovement(key);
 		}
-		if(key == Input.KEY_2) {
-			Reference.currentBuilding = 2;
+		
+	}
+	
+	private static void handlePlayerMovement(int key) {
+		if(key == Input.KEY_A) {
+			Reference.players[Reference.currentPlayer].moveLeft();
 		}
-		if(key == Input.KEY_3) {
-			Reference.currentBuilding = 3;
+		if(key == Input.KEY_D) {
+			Reference.players[Reference.currentPlayer].moveRight();
 		}
-		if(key == Input.KEY_4) {
-			Reference.currentBuilding = 4;
+		if(key == Input.KEY_W) {
+			Reference.players[Reference.currentPlayer].moveUp();
 		}
-		if(key == Input.KEY_5) {
-			Reference.currentBuilding = 5;
+		if(key == Input.KEY_S) {
+			Reference.players[Reference.currentPlayer].moveDown();
 		}
-		if(key == Input.KEY_6) {
-			Reference.currentBuilding = 6;
-		}
-		if(key == Input.KEY_7) {
-			Reference.currentBuilding = 7;
-		}
+	}
+	
+	private static void resetLevel() {
+		Chat.print("Resseting Level");
+		Reference.map.clear();
 	}
 }

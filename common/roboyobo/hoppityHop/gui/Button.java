@@ -8,6 +8,8 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
+import roboyobo.hoppityHop.loader.Textures;
+
 public class Button {
 	
 	private int startX, startY, length, height;
@@ -63,24 +65,33 @@ public class Button {
 	public boolean getLocked() {
 		return isLocked;
 	}
+	
+	public int getStateID() {
+		return stateID;
+	}
 
 	
 	public void renderButton(int par1, int par2, int par3, int par4, Graphics g) {
 		int border = par3 / 20;
-		if(isLocked) {
-			g.setColor(Color.black);
-			g.fill(new Rectangle(par1, par2, par3, par4));
-			g.setColor(Color.red);
-			g.fill(new Rectangle(par1 + border, par2 + border, par3 - (border * 2), par4 - (border * 2)));
+		if(name == "Play" || name == "Editor" || name == "Options") {
+			Textures.button.draw(par1, par2);
 		}
 		else {
+			if(isLocked) {
+				g.setColor(Color.black);
+				g.fill(new Rectangle(par1, par2, par3, par4));
+				g.setColor(Color.red);
+				g.fill(new Rectangle(par1 + border, par2 + border, par3 - (border * 2), par4 - (border * 2)));
+			}
+			else {
 		
-			g.setColor(Color.black);
-			g.fill(new Rectangle(par1, par2, par3, par4));
-			g.setColor(Color.gray);
-			g.fill(new Rectangle(par1 + border, par2 + border, par3 - (border * 2), par4 - (border * 2)));
+				g.setColor(Color.black);
+				g.fill(new Rectangle(par1, par2, par3, par4));
+				g.setColor(Color.gray);
+				g.fill(new Rectangle(par1 + border, par2 + border, par3 - (border * 2), par4 - (border * 2)));
+			}
 		}
-		font.drawString(this.getStartX() + border + 10, this.getStartY() + border + 10, name);
+			font.drawString(this.getStartX() + border + 10, this.getStartY() + border + 10, name);
 	}
 
 

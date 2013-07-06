@@ -49,6 +49,7 @@ public class MapEditorState extends BasicGameState {
 
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
+		Background.tile(Reference.tiles.get(7));
 		LevelTools.renderExtraLevelGui(Reference.map, g);
 		renderMap();
 		renderCurrentTile();
@@ -211,6 +212,10 @@ public class MapEditorState extends BasicGameState {
 		}
 		if(key == Input.KEY_O) {
 			MapEditorState.handleMapLoading();
+		}
+		
+		if(key == Input.KEY_E) {
+			MapEditorState.fillMap(0);
 		}
 		
 		if(key == Input.KEY_N) {

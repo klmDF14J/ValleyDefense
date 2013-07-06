@@ -34,15 +34,15 @@ public class GameLevelSelectorState extends BasicGameState {
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
 		Reference.levels = new ArrayList<Level>();
 		Reference.levelTabs = new ArrayList<LevelTab>();
-		Reference.levels.add(new Level(Reference.mapWidth, Reference.mapHeight, true, false, "Tutorial Level", 0));
-		Reference.levels.add(new Level(Reference.mapWidth, Reference.mapHeight, false, false, "Level 1", 0));
-		Reference.levels.add(new Level(Reference.mapWidth, Reference.mapHeight, false, false, "Level 2", 0));
-		Reference.levels.add(new Level(Reference.mapWidth, Reference.mapHeight, false, false, "Level 3", 1));
-		Reference.levels.add(new Level(Reference.mapWidth, Reference.mapHeight, false, false, "Level 4", 1));
-		Reference.levels.add(new Level(Reference.mapWidth, Reference.mapHeight, false, false, "Level 5", 1));
-		Reference.levels.add(new Level(Reference.mapWidth, Reference.mapHeight, false, false, "Level 6", 2));
-		Reference.levels.add(new Level(Reference.mapWidth, Reference.mapHeight, false, false, "Level 7", 2));
-		Reference.levels.add(new Level(Reference.mapWidth, Reference.mapHeight, false, false, "Level 8", 2));
+		Reference.levels.add(new Level(Reference.mapWidth, Reference.mapHeight, true, false, "Tutorial Level", 0, new int[] {10, 8, 6, 4, 2, 2, 1}));
+		Reference.levels.add(new Level(Reference.mapWidth, Reference.mapHeight, false, false, "Level 1", 0, new int[] {10, 8, 6, 4, 2, 2, 1}));
+		Reference.levels.add(new Level(Reference.mapWidth, Reference.mapHeight, false, false, "Level 2", 0, new int[] {10, 8, 6, 4, 2, 2, 1}));
+		Reference.levels.add(new Level(Reference.mapWidth, Reference.mapHeight, false, false, "Level 3", 1, new int[] {10, 8, 6, 4, 2, 2, 1}));
+		Reference.levels.add(new Level(Reference.mapWidth, Reference.mapHeight, false, false, "Level 4", 1, new int[] {10, 8, 6, 4, 2, 2, 1}));
+		Reference.levels.add(new Level(Reference.mapWidth, Reference.mapHeight, false, false, "Level 5", 1, new int[] {10, 8, 6, 4, 2, 2, 1}));
+		Reference.levels.add(new Level(Reference.mapWidth, Reference.mapHeight, false, false, "Level 6", 2, new int[] {10, 8, 6, 4, 2, 2, 1}));
+		Reference.levels.add(new Level(Reference.mapWidth, Reference.mapHeight, false, false, "Level 7", 2, new int[] {10, 8, 6, 4, 2, 2, 1}));
+		Reference.levels.add(new Level(Reference.mapWidth, Reference.mapHeight, false, false, "Level 8", 2, new int[] {10, 8, 6, 4, 2, 2, 1}));
 		
 		Reference.levelTabs.add(new LevelTab(500, 700, 200, 50, false, 0, "Campaign"));
 		Reference.levelTabs.add(new LevelTab(700, 700, 200, 50, false, 1, "Other"));
@@ -53,11 +53,7 @@ public class GameLevelSelectorState extends BasicGameState {
 	
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
-		for(int var1 = 0; var1 < (Reference.screenWidth / (Reference.tileSize * Reference.tileScaleSize)); var1++) {
-			for(int var2 = 0; var2 < (Reference.screenHeight / (Reference.tileSize * Reference.tileScaleSize)); var2++) {
-				Reference.tiles.get(4).draw((Reference.tileSize * Reference.tileScaleSize) * var1, (Reference.tileSize * Reference.tileScaleSize) * var2, Reference.tileScaleSize);
-			}
-		}
+		Background.tile(Reference.tiles.get(7));
 		int par1 = Reference.screenWidth / 2 - (400 / 2);
 		int par2 = Reference.screenHeight / 2 - 300;
 		int par3 = 400;

@@ -70,19 +70,7 @@ public class LevelTab {
 	
 	public void renderButton(int par1, int par2, int par3, int par4, Graphics g) {
 		int border = par3 / 20;
-		if(isLocked) {
-			g.setColor(Color.black);
-			g.fill(new Rectangle(par1, par2, par3, par4));
-			g.setColor(Color.red);
-			g.fill(new Rectangle(par1 + border, par2 + border, par3 - (border * 2), par4 - (border * 2)));
-		}
-		else {
-			
-			g.setColor(Color.black);
-			g.fill(new Rectangle(par1, par2, par3, par4));
-			g.setColor(Color.gray);
-			g.fill(new Rectangle(par1 + border, par2 + border, par3 - (border * 2), par4 - (border * 2)));
-		}
+		Textures.levelTab.draw(par1, par2);
 		Reference.fonts.get(3).drawString(this.getStartX() + border + 5, this.getStartY() + border + 5, this.getName());
 	}
 

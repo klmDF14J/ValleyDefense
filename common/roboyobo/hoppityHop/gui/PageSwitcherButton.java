@@ -8,6 +8,8 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
+import roboyobo.hoppityHop.loader.Textures;
+
 public class PageSwitcherButton {
 	
 	private int startX, startY, length, height;
@@ -61,19 +63,11 @@ public class PageSwitcherButton {
 
 	
 	public void renderButton(int par1, int par2, int par3, int par4, Graphics g) {
-		int border = par3 / 20;
-		if(isLocked) {
-			g.setColor(Color.black);
-			g.fill(new Rectangle(par1, par2, par3, par4));
-			g.setColor(Color.red);
-			g.fill(new Rectangle(par1 + border, par2 + border, par3 - (border * 2), par4 - (border * 2)));
+		if(id == 0) {
+			Textures.psb2.draw(par1, par2);
 		}
-		else {
-		
-			g.setColor(Color.black);
-			g.fill(new Rectangle(par1, par2, par3, par4));
-			g.setColor(Color.gray);
-			g.fill(new Rectangle(par1 + border, par2 + border, par3 - (border * 2), par4 - (border * 2)));
+		if(id == 1) {
+			Textures.psb1.draw(par1, par2);
 		}
 	}
 

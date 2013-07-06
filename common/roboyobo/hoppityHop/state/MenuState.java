@@ -1,5 +1,7 @@
 package roboyobo.hoppityHop.state;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,6 +15,9 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.gui.AbstractComponent;
+import org.newdawn.slick.gui.ComponentListener;
+import org.newdawn.slick.gui.TextField;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
@@ -23,6 +28,7 @@ import roboyobo.hoppityHop.HoppityHop;
 import roboyobo.hoppityHop.gui.Button;
 import roboyobo.hoppityHop.level.Level;
 import roboyobo.hoppityHop.loader.Textures;
+import roboyobo.hoppityHop.util.Chat;
 import roboyobo.hoppityHop.util.Reference;
 
 public class MenuState extends BasicGameState {
@@ -35,7 +41,7 @@ public class MenuState extends BasicGameState {
 	
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
-		
+	
 	}
 
 	@Override
@@ -44,11 +50,10 @@ public class MenuState extends BasicGameState {
 		Reference.buttons.add(new Button(Reference.screenWidth / 2 - (400 / 2), Reference.screenHeight / 2 - 200, 400, 100, false, Reference.gameSelectorID, "Play", Reference.fonts.get(1)));
 		Reference.buttons.add(new Button(Reference.screenWidth / 2 - (400 / 2), Reference.screenHeight / 2 - 50, 400, 100, false, Reference.mapEditorID, "Editor", Reference.fonts.get(1)));
 		Reference.buttons.add(new Button(Reference.screenWidth / 2 - (400 / 2), Reference.screenHeight / 2 + 100, 400, 100, true, Reference.menuID, "Options", Reference.fonts.get(1)));
-		for(int var1 = 0; var1 < (Reference.screenWidth / (Reference.tileSize * Reference.tileScaleSize)); var1++) {
-			for(int var2 = 0; var2 < (Reference.screenHeight / (Reference.tileSize * Reference.tileScaleSize)); var2++) {
-				Reference.tiles.get(4).draw((Reference.tileSize * Reference.tileScaleSize) * var1, (Reference.tileSize * Reference.tileScaleSize) * var2, Reference.tileScaleSize);
-			}
-		}
+		
+		
+		
+		Background.tile(Reference.tiles.get(7));
 		for(int var3 = 0; var3 < Reference.buttons.size(); var3++) {
 			Button button = Reference.buttons.get(var3);
 			button.renderButton(button.getStartX(), button.getStartY(), button.getLength(), button.getHeight(), g);
@@ -58,6 +63,8 @@ public class MenuState extends BasicGameState {
 			Reference.levels.get(var4).loadLevel(Reference.levels.get(var4).getLevelFile());
 		}
 		Reference.fonts.get(0).drawString(275, 75, "Hoppity Hop", new Color(0, 0, 0));
+		
+		
 	}
 
 	@Override
@@ -74,9 +81,12 @@ public class MenuState extends BasicGameState {
 		Rectangle bounds = new Rectangle(x, y, 10, 10);
 		for(int var1 = 0; var1 < Reference.buttons.size(); var1++) {
 			Button b = Reference.buttons.get(var1);
+			Chat.print("For Looping: " + var1);
 			if(bounds.intersects(new Rectangle(b.getStartX(), b.getStartY(), b.getLength(), b.getHeight()))) {
+				Chat.print("State ID: " + HoppityHop.stateID);
 				if(!b.getLocked() && HoppityHop.stateID == Reference.menuID) {
 					b.enterState(sbg, true);
+					Chat.print("Entering State: " + b.id);
 				}
 			}
 		}

@@ -1,6 +1,7 @@
 package roboyobo.hoppityHop.util;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -10,28 +11,33 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.geom.Line;
 
-import roboyobo.hoppityHop.game.Building;
 import roboyobo.hoppityHop.gui.Button;
 import roboyobo.hoppityHop.gui.LevelTab;
 import roboyobo.hoppityHop.gui.PageSwitcherButton;
 import roboyobo.hoppityHop.level.Level;
+import roboyobo.hoppityHop.player.Player;
 
 public class Reference {
-	public static int menuID = 0;
-	public static int gameSelectorID = 1;
-	public static int mapEditorID = 2;
-	public static int gameID = 3;
+	public static int usernameStateID = 0;
+	public static int menuID = 1;
+	public static int gameSelectorID = 2;
+	public static int mapEditorID = 3;
+	public static int gameID = 4;
+	
 	
 	public static String imageFolder = "/resources/images/valleyDefense/";
+	public static String soundsDirectory = "/resources/sounds/valleyDefense/";
 	
 	public static int mapWidth = 25;
 	public static int mapHeight = 16;
 	
 	
-	public static Level map = new Level(Reference.mapWidth, Reference.mapHeight, false, false, "", 0);
+	public static Level map = new Level(Reference.mapWidth, Reference.mapHeight, false, false, "", 0, new int[] {10, 9, 8, 7, 6, 5, 4});
+	
 	
 	public static int[] xPositions = new int[mapWidth];
 	public static int[] yPositions = new int[mapHeight];
+	
 	
 	public static ArrayList<Image> tiles;
 	public static int currentTile = 0;
@@ -55,10 +61,20 @@ public class Reference {
 	public static int iconSize = 16;
 	public static ArrayList<UnicodeFont> fonts;
 	public static int currentBuilding = 1;
-	public static ArrayList<Image> buildingImages;
 	public static PageSwitcherButton[] pageSwitcherButtons = new PageSwitcherButton[2];
-	public static int[] blocks = {10, 8, 6, 4, 2, 2, 1};
-	public static int[] blockDefaults = {10, 8, 6, 4, 2, 2, 1};
 	public static ArrayList<Integer> pickupableBuildings;
+	public static ArrayList<Integer> placeableBlocks;
 	public static int currentLevel = 0;
+	
+	public static int currentNumOfPlayers = 0;
+	public static int currentPlayer = 0;
+	public static Player[] players = new Player[4];
+	public static int updateTime;
+	public static int lastJumpTime;
+	public static int tickTime = 20;
+	public static int minJumpTime = 60;
+	public static String username = "Test Player";
+	public static boolean hasErrored = false;
+	
+
 }

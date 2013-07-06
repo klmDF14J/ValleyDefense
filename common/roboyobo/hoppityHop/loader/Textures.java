@@ -20,12 +20,11 @@ public class Textures {
 	public static SpriteSheet Tiles;
 	public static SpriteSheet buildings;
 	public static SpriteSheet items;
-	public static Image box, boxH;
+	public static Image box, boxH, psb1, psb2, levelTab, button, buttonH;
 	
 	public static void load() {
 		Reference.tiles = new ArrayList<Image>();
 		Reference.items = new ArrayList<Image>();
-		Reference.buildingImages = new ArrayList<Image>();
 		Reference.fonts = new ArrayList<UnicodeFont>();
 		
 		try {
@@ -36,10 +35,16 @@ public class Textures {
 			Reference.fonts.add(addAndReturnNewFont("buttonText", 12));
 			Tiles = new SpriteSheet(Reference.imageFolder + "/tiles/Tiles.png", 20, 20);
 			items = new SpriteSheet(Reference.imageFolder + "/items/Items.png", 16, 16);
-			buildings = new SpriteSheet(Reference.imageFolder + "/tiles/Buildings.png", 20, 20);
 			
 			box = new Image(Reference.imageFolder + "/framework/Box.png");
 			boxH = new Image(Reference.imageFolder + "/framework/Box Highlighted.png");
+			
+			psb1 = new Image(Reference.imageFolder + "/framework/Page Switcher Button 1.png");
+			psb2 = new Image(Reference.imageFolder + "/framework/Page Switcher Button 2.png");
+			
+			levelTab = new Image(Reference.imageFolder + "/framework/Level Tab.png");
+			button = new Image(Reference.imageFolder + "/framework/Button.png");
+			buttonH = new Image(Reference.imageFolder + "/framework/Button Highlighted.png");
 		} catch (SlickException e) {
 			Chat.error(Exception.slickException, Reason.slickError.getReason() + e.getClass());
 		}
@@ -60,12 +65,6 @@ public class Textures {
 			}
 		}
 		
-		for(int var5 = 0; var5 < 20; var5++) {
-			for(int var6 = 0; var6 < 20; var6++) {
-				Image image = buildings.getSprite(var6, var5);
-				Reference.buildingImages.add(image);
-			}
-		}
 		
 	}
 	

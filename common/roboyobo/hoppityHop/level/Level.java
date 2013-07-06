@@ -8,7 +8,6 @@ import java.io.ObjectInputStream;
 
 import org.newdawn.slick.Color;
 
-import roboyobo.hoppityHop.game.Building;
 import roboyobo.hoppityHop.gui.LevelBox;
 import roboyobo.hoppityHop.tile.Tile;
 import roboyobo.hoppityHop.util.Chat;
@@ -24,7 +23,6 @@ public class Level implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Tile[][] level;
-	private Building[][] buildings;
 	
 	private boolean isUnlocked, isDone;
 	private String name;
@@ -32,16 +30,17 @@ public class Level implements java.io.Serializable {
 	private File levelFile;
 	private Level l;
 	private Color color;
-	private int[] blocks;
+	private int[] blocks, defBlocks;
 	
-	public Level(int par1, int par2, boolean par3, boolean par4, String par5, int par6) {
+	public Level(int par1, int par2, boolean par3, boolean par4, String par5, int par6, int[] par7) {
 		level = new Tile[par1][par2];
-		buildings = new Building[par1][par2];
 		isUnlocked = par3;
 		isDone = par4;
 		name = par5;
 		page = par6;
 		levelFile = new File("resources/levels/hoppityHop/" + name + ".VDMap");
+		blocks = par7;
+		defBlocks = par7;
 	}
 	
 	public Tile[][] loadLevel(File file) {
@@ -53,7 +52,7 @@ public class Level implements java.io.Serializable {
 			level = l.getLevel();
 			ois.close();
 		} catch (FileNotFoundException e) {
-			Chat.error(Exception.fileNotFoundException, Reason.loadError.getReason() + levelFile);
+			//Chat.error(Exception.fileNotFoundException, Reason.loadError.getReason() + levelFile);
 		} catch (IOException e) {
 			Chat.error(Exception.IOException, Reason.ioError.getReason());
 		}
@@ -71,26 +70,16 @@ public class Level implements java.io.Serializable {
 		return level;
 	}
 	
-	public Building[][] getBuildings() {
-		return buildings;
-	}
 	
 	public void setTileAt(int par1, int par2, Tile par3) {
 		level[par1][par2] = par3;
 	}
 	
-	public void setBuildingAt(int par1, int par2, Building par3) {
-		buildings[par1][par2] = par3;
-	}
 	
 	public void setIDAt(int par1, int par2, int par3, int par4, boolean par5) {
 		if(par1 == 0) {
 			Tile t = new Tile(par2, par3, par4, par5);
 			setTileAt(par2, par3, t);
-		}
-		else if(par1 == 1) {
-			Building b = new Building(par2, par3, par4, par5, false); 
-			setBuildingAt(par2, par3, b);
 		}
 	}
 	
@@ -98,9 +87,6 @@ public class Level implements java.io.Serializable {
 		return level[par1][par2];
 	}
 	
-	public Building getBuildingAt(int par1, int par2) {
-		return buildings[par1][par2];
-	}
 
 	public boolean isUnlocked() {
 		return isUnlocked;
@@ -141,11 +127,49 @@ public class Level implements java.io.Serializable {
 	}
 
 	public void clear() {
+		Chat.print("Clearing Level");
 		for(int var1 = 0; var1 < Reference.mapWidth; var1++) {
 			for(int var2 = 0; var2 < Reference.mapHeight; var2++) {
-				setIDAt(1, var1, var2, 0, false);
+				if(getTileAt(var1, var2) != null) {
+					if(getTileAt(var1, var2).getTileID() >= 20) {
+						Tile t = Reference.map.getTileAt(var1, var2);
+						int i = t.getTileID();
+						if(i == 20) {
+							blocks[0]++;
+						}
+						if(i == 21) {
+							blocks[1]++;
+						}
+						if(i == 22) {
+							blocks[2]++;
+						}
+						if(i == 23) {
+							blocks[3]++;
+						}
+						if(i == 24) {
+							blocks[4]++;
+						}
+						if(i == 25) {
+							blocks[5]++;
+						}
+						if(i == 26) {
+							blocks[6]++;
+						}
+						Chat.print("ID: " + i);
+						
+						setTileAt(var1, var2, new Tile(Reference.xPositions[var1], Reference.yPositions[var2], 0, false));
+						
+						
+					}
+				}
+					
 			}
 		}
+	}
+
+	public void resetBlocks() {
+		Chat.print("Resetting Blocks");
+		blocks = defBlocks;
 	}
 
 	
